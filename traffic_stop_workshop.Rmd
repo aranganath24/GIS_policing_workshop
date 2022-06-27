@@ -1209,10 +1209,13 @@ traffic_bias_map_continuous_labeled
 ## Summary script for categorical map
 
 ```{r}
-# Makes categorical variable based on continuous "bias_index" variable; this categorical variable is named "apparent_bias", and is coded as "Apparent Bias" if "bias_index">0 and coded as "No Apparent Bias" if "bias_index"<=0
+# Makes categorical variable based on continuous "bias_index" variable; this categorical 
+# variable is named "apparent_bias", and is coded as "Apparent Bias" if "bias_index">0 and 
+# coded as "No Apparent Bias" if "bias_index"<=0
 county_shapefile_biasIndex<-
   county_shapefile_biasIndex %>% 
-            mutate(apparent_bias=ifelse(bias_index>0, "Apparent Bias", 
+            mutate(apparent_bias=ifelse(bias_index>0, 
+                                        "Apparent Bias", 
                                         "No Apparent Bias"))
 
 # Makes categorical map based on "apparent_bias" variable and assigns this map to object named 
