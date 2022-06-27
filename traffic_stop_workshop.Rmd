@@ -1496,7 +1496,7 @@ co_counties_census_2010
 
 At this point, we now have the census data that was provided to you at the start of the tutorial. 
 
-To export this dataset, use the **```write_csv()```** function; below, the first argument is the name of the object which contains the dataset to be exported, and the second argument is the desired file name. The data is exported to the current working directory, and can subsequently be opened on your spreadsheet software of choice as a CSV file. 
+To export this dataset, we can use the **```write_csv()```** function; below, the first argument is the name of the object which contains the dataset to be exported, and the second argument is the desired file name. The data is exported to the current working directory, and can subsequently be opened on your spreadsheet software of choice as a CSV file. 
 
 ```{r, eval=FALSE}
 # Exports the data assigned to the "co_counties_census_2010" object to the working directory
