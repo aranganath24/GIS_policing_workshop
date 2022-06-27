@@ -783,7 +783,10 @@ However, we'll begin customizing the map by passing additional arguments to the 
 * Finally, we call the **```tm_layout()```** function, which allows us to customize the map's layout; within this function, we set ```frame=FALSE``` (which removes the map's frame, or bounding box) and ```legend.outside=TRUE``` (which places the legend outside the map's domain, so as to not interfere with the display of counties).
 
 ```{r, fig.asp=0.5}
-# Creates map of "bias_index" from the "county_shapefile_biasIndex" object with yellow-to-red color scheme, five legend partitions based on the Jenks algorithm, and without a map frame/bounding box; counties with NA values are labeled with "No Data" in the legend, and the map's legend is placed outside the polygon display
+# Creates map of "bias_index" from the "county_shapefile_biasIndex" object with 
+# yellow-to-red color scheme, five legend partitions based on the Jenks algorithm, 
+# and without a map frame/bounding box; counties with NA values are labeled with 
+# "No Data" in the legend, and the map's legend is placed outside the polygon display
   tm_shape(county_shapefile_biasIndex)+
       tm_polygons(col="bias_index", 
                   palette="YlOrRd", 
@@ -802,7 +805,11 @@ This is starting to look better; in the next two subsections, we'll explore how 
 Let's say that instead of using the Jenks (or some other algorithm) to partition our data into intervals, we want to set our own data intervals. Doing so might make sense here, especially since we want to clearly differentiate counties with a bias index less than or equal to zero from those that are above zero. We can specify our legend breaks in a numeric vector (i.e. a sequence of numbers) passed to the ```breaks``` argument within the **```tm_polygons()```** function. Below, we set ```breaks=c(-10,-5,0,2,4,5)```, which indicates that we want our intervals to be from -10 to -5; -5 to 0; 0 to 2; 2 to 4; and 4 to 5. Note that the "c" before the sequence of numbers bounded by parentheses is actually a function, which is used to indicate that the sequence of elements that follows must be interpreted as a vector. Also, note that we've removed the ```style="jenks"``` argument that we used above, since we're using custom legend breaks (rather than breaks implemented by the jenks algorithm). Other than those changes, other elements of the code below are the same as that used in the previous code block. 
 
 ```{r, fig.asp=0.5}
-# Creates map of "bias_index" from the "county_shapefile_biasIndex" object with yellow-to-red color scheme, five legend partitions based on a vector passed to the "breaks" argument, and without a map frame/bounding box; counties with NA values are labeled with "No Data" in the legend, and the map's legend is placed outside the polygon display
+# Creates map of "bias_index" from the "county_shapefile_biasIndex" object with 
+# yellow-to-red color scheme, five legend partitions based on a vector passed to 
+# the "breaks" argument, and without a map frame/bounding box; counties with NA values 
+# are labeled with "No Data" in the legend, and the map's legend is placed outside 
+# the polygon display
   tm_shape(county_shapefile_biasIndex)+
     tm_polygons(col="bias_index", 
                 palette="YlOrRd", 
@@ -825,7 +832,8 @@ my_colors<-c("white", "peachpuff", "red1", "red4", "navy")
 Now, we can pass this vector as an argument to the **```tm_polygons()```** function. Instead of setting ```palette=YlOrRd``` (as above), we instead set ```palette=my_colors```. The colors in the ```my_colors``` vector are assigned to the numeric intervals in order; that is, the interval from -10 to -5 is assigned the color "white" (the first color in the vector), the interval from -5 to 0 is assigned the color "peachpuff" (the second color in the vector), the interval from 0 to 2 is assigned the color "red1" (the third color in the vector), and so on. Everything else in the code remains the same as in the previous section: 
 
 ```{r, fig.asp=0.5}
-# Creates map of "bias_index" from "county_shapefile_biasIndex" object using custom color palette defined in the "my_colors" vector
+# Creates map of "bias_index" from "county_shapefile_biasIndex" object using custom 
+# color palette defined in the "my_colors" vector
 tm_shape(county_shapefile_biasIndex)+
   tm_polygons(col="bias_index", 
               palette=my_colors, 
@@ -868,8 +876,10 @@ More specifically, let's say we want to use a map to clearly distinguish the cou
 To build such a map, the first step is to create a new categorical variable, based on the continuous "bias_index" variable, within ```county_shapefile_biasIndex```. In the code below, we take the existing spatial dataset assigned to the ```county_shapefile_biasIndex``` object, and then use the **```mutate()```** function to create a new variable named "apparent_bias." This new "apparent_bias" variable will be coded as "Apparent Bias" for counties where "bias_index">0, and coded as "No Apparent Bias" for all other counties (i.e. where the bias index is less than or equal to zero). This is accomplished using the **```ifelse()```** function. The first argument to the **```ifelse()```** function is a given condition (here ```bias_index>0```). The second argument specifies the value that the new "apparent_bias" variable should take when that condition is true; the third argument specifies the value that the "apparent_bias" variable should take when that condition is false. After creating and defining this new variable, we assign the changes back to the ```county_shapefile_biasIndex``` object, which overwrites the previous version of the dataset. 
 
 ```{r}
-# Takes the existing dataset assigned to the "county_shapefile_biasIndex" object, and creates a new variable 
-# named "apparent_bias"; this variable takes  on the value "Apparent Bias" where the "bias_index" variable is # >0 and "No Apparent Bias" where it is less than or equal to zero; these changes are then assigned back to 
+# Takes the existing dataset assigned to the "county_shapefile_biasIndex" object, 
+# and creates a new variable named "apparent_bias"; this variable takes  on the 
+# value "Apparent Bias" where the "bias_index" variable is # >0 and "No Apparent Bias" 
+# where it is less than or equal to zero; these changes are then assigned back to 
 # the "county_shapefile_biasIndex" object
 county_shapefile_biasIndex<-
   county_shapefile_biasIndex %>% 
@@ -892,8 +902,8 @@ county_shapefile_biasIndex
 Now that we have created this new categorical variable, let's go ahead and create a map that displays it on our map of Colorado counties. The code below looks very similar to the code used to map the original "bias_index" variable. The main difference is that instead of setting ```col=bias_index```, we set ```col="apparent_bias"```, since we now want to map the categorical "apparent_bias" variable, rather than the continuous "bias_index" variable. Another difference worth pointing out is that we use a different, bipartite color scheme (since there are now only two categories to map); this color scheme is defined by the vector ```c("orangered1", "white")```, which is passed to the "palette" argument within the **```tm_polygons```** function. Finally, in the previous map, the legend's title was taken from the name of the column that was mapped; here, having this title would be redundant, so we can remove the legend title using ```title=""```. We'll assign this map of the categorical "apparent_bias" variable to a new object named ```traffic_bias_map_categorical```: 
 
 ```{r}
-# Creates county-level map of categorical "apparent_bias" variable and assigns it to an object named 
-# "traffic_bias_map_categorical"
+# Creates county-level map of categorical "apparent_bias" variable and 
+# assigns it to an object named "traffic_bias_map_categorical"
 traffic_bias_map_categorical<-
   tm_shape(county_shapefile_biasIndex)+
       tm_polygons(col="apparent_bias", 
@@ -1007,7 +1017,9 @@ traffic_bias_map_continuous_labeled
 The code below refines the categorical map we created in Section 6.4. The map is largely the same as the one created in that section, but adds and customizes the appearance of the map's title using arguments to the  **```tm_layout()```** function that we have already discussed in Section 7.1, and also adds a map credits section that is identical to the one we used in 7.1. The map is assigned to the ```traffic_bias_map_categorical``` object, which overwrites the map we previously assigned to this object in Section 6.4. 
 
 ```{r}
-# Creates a map of the categorical "apparent_bias" variable, with counties where there is apparent bias in traffic police stops displayed in "orangered1", and counties without apparent bias displayed in "white"
+# Creates a map of the categorical "apparent_bias" variable, with counties 
+# where there is apparent bias in traffic police stops displayed in "orangered1", 
+# and counties without apparent bias displayed in "white"
 traffic_bias_map_categorical<-
 tm_shape(county_shapefile_biasIndex)+
   tm_polygons(col="apparent_bias", 
@@ -1060,7 +1072,8 @@ Once you have made a map and are satisfied with its appearance, it is straightfo
 The easiest way to export maps is by using the **```tmap_save()```** function. This function allows users to specify the desired dimensions and resolution of the exported map, among other things. For our purposes, we'll simply export the map assigned to ```traffic_bias_map_continuous_labeled``` using the default settings. Below, the first argument is the name of the map object we'd like to export; here, that is ```traffic_bias_map_continuous_labeled```. The second argument is the desired file name and extension; it is possible to pick any number of extensions, such as PDF, jpeg, and png. Here, we'll export the map as a .png file. 
 
 ```{r}
-# Exports map assigned to "traffic_bias_map_continuous_labeled" object to working directory; the exported map # is saved as "traffic_bias_map_continuous_labeled.png"
+# Exports map assigned to "traffic_bias_map_continuous_labeled" object to working directory; 
+# the exported map is saved as "traffic_bias_map_continuous_labeled.png"
 tmap_save(traffic_bias_map_continuous_labeled, 
           "traffic_bias_map_continuous_labeled.png")
 ```
@@ -1162,30 +1175,30 @@ my_colors<-c("white", "peachpuff", "red1", "red4", "navy") # defines color palet
 
 # make a map of the continuous "bias_index" variable
 traffic_bias_map_continuous_labeled<-  
-  tm_shape(county_shapefile_biasIndex)+ # specifies name of object containing data to be mapped
-  tm_polygons(col="bias_index", # specifies variable to be mapped
-              palette=my_colors, # specifies color palette to be used in map
-              title="(Black % of Traffic Stops) - (Black % of Population)", # creates legend subtitle
+  tm_shape(county_shapefile_biasIndex)+ 
+  tm_polygons(col="bias_index", 
+              palette=my_colors, 
+              title="(Black % of Traffic Stops) - (Black % of Population)", 
               textNA="No Data", # specifies label for NA data values
-              n=5, # specifies number of data partitions
-              breaks=c(-10,-5, 0.01, 2, 4, 5))+ # specifies legend breaks
-  tm_layout(frame=FALSE, # removes bounding box
-            legend.outside=TRUE, # places legend outside map domain
-            legend.text.size=0.68, # sets size of non-title legend text
-            legend.title.size=0.75,  # sets text size for legend subtitle
-            title="Traffic Stop Racial Bias Index", # sets legend main title
-            title.size=0.75, # sets text size for legend main title
-            title.fontface = 2, # makes legend title text bold
-            main.title="Racial Bias in Traffic Stops, by County (Colorado)", # sets main title for map
-            main.title.position=0.03, # sets position of main title
-            main.title.size=1, # sets text size for map's main title
-            attr.outside=TRUE)+ # places credits outside map domain
-  tm_credits("Map Author: NAME\nData Sources: 2010 Decennial Census via tidycensus,\nStanford Open Policing Project,\nColorado GeoLibrary ", # sets credits text
-                    position=c(0.02,0.01), # sets credits position
-                    size=0.38)+ # sets credits size
-  tm_text("NAME", # specifies the name of the variable in spatial dataset containing desired polygon labels
-          size=0.30, # sets size of labels
-          fontface=2) # makes polygon labels bold
+              n=5, 
+              breaks=c(-10,-5, 0.01, 2, 4, 5))+ 
+  tm_layout(frame=FALSE, 
+            legend.outside=TRUE, 
+            legend.text.size=0.68, 
+            legend.title.size=0.75,  
+            title="Traffic Stop Racial Bias Index", 
+            title.size=0.75, 
+            title.fontface = 2,
+            main.title="Racial Bias in Traffic Stops, by County (Colorado)",
+            main.title.position=0.03, 
+            main.title.size=1, 
+            attr.outside=TRUE)+ 
+  tm_credits("Map Author: NAME\nData Sources: 2010 Decennial Census via tidycensus,\nStanford Open Policing Project,\nColorado GeoLibrary ", 
+            position=c(0.02,0.01), 
+            size=0.38)+ 
+  tm_text("NAME", 
+          size=0.30, 
+          fontface=2)
 ```
 
 ```{r, fig.asp=0.5}
@@ -1205,23 +1218,23 @@ county_shapefile_biasIndex<-
 # Makes categorical map based on "apparent_bias" variable and assigns this map to object named 
 # "traffic_bias_map_categorical"
 traffic_bias_map_categorical<-
-  tm_shape(county_shapefile_biasIndex)+ # specifies name of spatial object containing data to be mapped
-    tm_polygons(col="apparent_bias", # specifies name of variable to be mapped
-                title="", # eliminates legend title
-                palette=c("orangered1", "white"), # sets color scheme for categories
-                textNA="No Data")+ # specifies label for NA data values
-    tm_layout(frame=FALSE, # removes map bounding box
-              legend.outside=TRUE, # places legend outside map domain
-              main.title="Racial Bias in Traffic Stops, by County in Colorado\n(Based on Whether % of Black Motorists Stopped by Police > County's Adult Black Population %)", # sets main title for map
-              main.title.position=0.03, # sets position for map's main title
-              main.title.size=0.75, # sets size for map's main title
-              attr.outside=TRUE)+ # sets map credits outside map's domain
-  tm_credits("Map Author: NAME\nData Sources: 2010 Decennial Census via tidycensus,\nStanford Open Policing Project,\nColorado GeoLibrary ",  # sets text for map credits
-              position=c(0.02,0.01), # Specifies location of map credits
-             size=0.38)+ # specifies size of map credit text
-  tm_text("NAME", # specifies the name of the variable in spatial dataset containing desired polygon labels
-          size=0.30, # sets size of labels
-          fontface=2) # makes polygon labels bold
+  tm_shape(county_shapefile_biasIndex)+
+    tm_polygons(col="apparent_bias", 
+                title="", 
+                palette=c("orangered1", "white"), 
+                textNA="No Data")+ 
+    tm_layout(frame=FALSE, 
+              legend.outside=TRUE, 
+              main.title="Racial Bias in Traffic Stops, by County in Colorado\n(Based on Whether % of Black Motorists Stopped by Police > County's Adult Black Population %)", 
+              main.title.position=0.03, 
+              main.title.size=0.75, 
+              attr.outside=TRUE)+ 
+  tm_credits("Map Author: NAME\nData Sources: 2010 Decennial Census via tidycensus,\nStanford Open Policing Project,\nColorado GeoLibrary ",  
+              position=c(0.02,0.01), 
+             size=0.38)+ 
+  tm_text("NAME", 
+          size=0.30, 
+          fontface=2) 
 ```
 
 ```{r, fig.asp=0.5}
